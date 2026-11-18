@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PathSnap evaluator</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2330; --muted:#667085; --line:#d9dde4; --accent:#2a6fbb; --good:#1a9850; --bad:#d73027; }
+  body { margin:0; font-family: Arial, Helvetica, sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:var(--accent); color:#fff; padding:12px 20px; }
+  header h1 { margin:0; font-size:20px; }
+  main { max-width:1100px; margin:0 auto; padding:16px; display:grid; gap:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:14px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  input[type=text] { flex:1; min-width:240px; padding:8px; border:1px solid var(--line); border-radius:6px; font-size:14px; }
+  button { padding:8px 14px; border:0; border-radius:6px; background:var(--accent); color:#fff; font-size:14px; cursor:pointer; }
+  button.trip { background:#fff; color:var(--ink); border:1px solid var(--line); }
+  button.trip.sel { background:var(--accent); color:#fff; }
+  button:disabled { opacity:.5; cursor:wait; }
+  #status { color:var(--muted); font-size:14px; }
+  #status.err { color:var(--bad); font-weight:bold; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; }
+  .kpi { border:1px solid var(--line); border-radius:8px; padding:10px; }
+  .kpi b { display:block; font-size:24px; }
+  .kpi span { color:var(--muted); font-size:12px; }
+  canvas { width:100%; height:520px; border:1px solid var(--line); border-radius:6px; background:#fff; }
+  table { border-collapse:collapse; font-size:13px; }
+  td, th { border:1px solid var(--line); padding:4px 8px; text-align:left; }
+  iframe { width:100%; height:560px; border:1px solid var(--line); border-radius:6px; }
+  pre { background:#f2f4f7; padding:8px; overflow:auto; max-height:260px; font-size:12px; }
+  .legend span { margin-right:14px; font-size:13px; }
+</style>
+</head>
+<body>
+<header><h1>PathSnap - map matching evaluator</h1></header>
+<main>
+  <div class="card">
+    <div class="row">
+      <label for="api"><b>API URL</b></label>
+      <input id="api" type="text" placeholder="http://192.168.1.10:8000">
+      <button id="connect">Connect / load trips</button>
+    </div>
+    <p id="status">Enter the address of the API laptop (for example http://192.168.x.x:8000) and press Connect.</p>
+  </div>
+
+  <div class="card">
+    <b>Evaluation trips</b>
+    <div id="trips" class="row" style="margin-top:8px"></div>
+  </div>
+
+  <div id="result" style="display:none; gap:14px;" class="card">
+    <h3 id="title" style="margin-top:0"></h3>
+    <div class="kpis" id="kpis"></div>
+    <p class="legend"><span style="color:#2166ac">&#9679; GPS points</span><span style="color:#d73027">&#9473; Predicted route</span><span style="color:#888">(simple offline plot; the interactive map is below)</span></p>
+    <canvas id="plot" width="1000" height="520"></canvas>
+    <details style="margin-top:10px"><summary>Timings and diagnostics</summary><div id="details"></div></details>
+    <details style="margin-top:10px"><summary>Raw API response (without coordinates)</summary><pre id="raw"></pre></details>
+    <p><button id="mapbtn">Show interactive Folium map</button> <span style="color:#667085;font-size:12px">needs internet for map tiles</span></p>
+    <iframe id="mapframe" style="display:none"></iframe>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+let API = params.get("api") || (function(){ try { return localStorage.getItem("pathsnap_api"); } catch(e) { return null; } })() || "";
+$("api").value = API;
+let currentTrip = null;
+
+function status(msg, isErr) { $("status").textContent = msg; $("status").className = isErr ? "err" : ""; }
+function base() { return $("api").value.trim().replace(/\/+$/, ""); }
+function pct(x) { return (x === null || x === undefined) ? "n/a" : (100 * x).toFixed(1) + "%"; }
+
+async function loadTrips() {
+  const url = base();
+  if (!url) { status("Please enter the API URL first.", true); return; }
+  try { localStorage.setItem("pathsnap_api", url); } catch(e) {}
+  status("Connecting to " + url + " ...");
+  try {
+    const h = await (await fetch(url + "/health")).json();
+    const t = await (await fetch(url + "/trips")).json();
+    status("Connected. Model: " + h.model + ". " + t.trips.length + " trips available.");
+    $("trips").innerHTML = "";
+    t.trips.forEach(tr => {
+      const b = document.createElement("button");
+      b.className = "trip"; b.textContent = tr.trip_id + " (" + tr.n_gps_points + " pts)";
+      b.onclick = () => predict(tr.trip_id, b);
+      $("trips").appendChild(b);
+    });
+  } catch (e) { status("Cannot reach the API at " + url + " (" + e.message + "). Check the address, that the API is running, and the firewall.", true); }
+}
+
+async function predict(id, btn) {
+  document.querySelectorAll("button.trip").forEach(b => { b.classList.remove("sel"); b.disabled = true; });
+  btn.classList.add("sel");
+  status("Running the prediction pipeline for trip " + id + " ... (a few seconds)");
+  $("mapframe").style.display = "none";
+  try {
+    const r = await fetch(base() + "/predict", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ trip_id: id }) });
+    if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(r.status + " " + (e.detail || r.statusText)); }
+    const d = await r.json();
+    currentTrip = id;
+    show(d);
+    status("Done: trip " + id + " in " + d.timings.total_predict_s + " s (prediction) + " + d.timings.scoring_s + " s (server-side scoring).");
+  } catch (e) { status("Request failed: " + e.message, true); }
+  document.querySelectorAll("button.trip").forEach(b => b.disabled = false);
+}
+
+function show(d) {
+  $("result").style.display = "block";
+  $("title").textContent = "Trip " + d.trip_id;
+  const ev = d.evaluation || {};
+  const k = [];
+  if (ev.available) {
+    k.push(["Top-1 accuracy (with HMM)", pct(ev.hmm_top1_accuracy)]);
+    k.push(["Top-1 accuracy (classifier only)", pct(ev.classifier_only_top1_accuracy)]);
+    k.push(["Macro F1 (with HMM)", ev.hmm_macro_f1.toFixed(3)]);
+    k.push(["Route F1 (arcs vs reference)", ev.route_f1.toFixed(3)]);
+    k.push(["Route precision / recall", ev.route_precision.toFixed(2) + " / " + ev.route_recall.toFixed(2)]);
+    k.push(["Route continuity", pct(ev.hmm_route_continuity)]);
+  } else { k.push(["Accuracy", "n/a"]); k.push(["Reason", ev.reason || "-"]); }
+  k.push(["GPS points used", d.n_points_used + (d.n_points_dropped ? " (" + d.n_points_dropped + " invalid dropped)" : "")]);
+  k.push(["Predicted route arcs", d.predicted_route_arcs.length + (d.route_breaks ? " (" + d.route_breaks + " breaks)" : "")]);
+  $("kpis").innerHTML = k.map(x => '<div class="kpi"><b>' + x[1] + '</b><span>' + x[0] + '</span></div>').join("");
+  let det = "<table><tr><th>Step</th><th>seconds</th></tr>" + Object.entries(d.timings).map(([a, b]) => "<tr><td>" + a + "</td><td>" + b + "</td></tr>").join("") + "</table>";
+  det += "<p>" + Object.entries(d.diagnostics).map(([a, b]) => a + ": " + b).join(" &middot; ") + "</p>" + (d.warning ? "<p><b>Warning:</b> " + d.warning + "</p>" : "");
+  $("details").innerHTML = det;
+  const slim = Object.assign({}, d); slim.gps_points = "[" + d.gps_points.length + " points]"; slim.predicted_route_polylines = "[" + d.predicted_route_polylines.length + " polylines]";
+  slim.predicted_route_arcs = "[" + d.predicted_route_arcs.length + " arc ids]"; slim.predicted_arc_per_point = "[" + d.predicted_arc_per_point.length + " arc ids]";
+  $("raw").textContent = JSON.stringify(slim, null, 2);
+  draw(d);
+}
+
+// Offline plot: no map tiles needed, so it also works without internet.
+function draw(d) {
+  const c = $("plot"), g = c.getContext("2d"); g.clearRect(0, 0, c.width, c.height);
+  const lines = d.predicted_route_polylines, pts = d.gps_points;
+  const all = pts.concat(...lines);
+  if (!all.length) { g.fillText("nothing to draw", 20, 20); return; }
+  let la0 = Math.min(...all.map(p => p[0])), la1 = Math.max(...all.map(p => p[0]));
+  let lo0 = Math.min(...all.map(p => p[1])), lo1 = Math.max(...all.map(p => p[1]));
+  const kx = Math.cos((la0 + la1) / 2 * Math.PI / 180);
+  const w = Math.max((lo1 - lo0) * kx, 1e-6), h = Math.max(la1 - la0, 1e-6), pad = 20;
+  const s = Math.min((c.width - 2 * pad) / w, (c.height - 2 * pad) / h);
+  const X = p => pad + (p[1] - lo0) * kx * s, Y = p => c.height - pad - (p[0] - la0) * s;
+  g.fillStyle = "#2166ac";
+  pts.forEach(p => { g.beginPath(); g.arc(X(p), Y(p), 2, 0, 6.3); g.fill(); });
+  g.strokeStyle = "#d73027"; g.lineWidth = 2.5;
+  lines.forEach(l => { g.beginPath(); l.forEach((p, i) => i ? g.lineTo(X(p), Y(p)) : g.moveTo(X(p), Y(p))); g.stroke(); });
+}
+
+$("connect").onclick = loadTrips;
+$("mapbtn").onclick = () => { const f = $("mapframe"); f.src = base() + "/map/" + currentTrip; f.style.display = "block"; };
+if (API) loadTrips();
+</script>
+</body>
+</html>
