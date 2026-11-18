@@ -7,21 +7,22 @@ def _to_lonlat_list(xy_lonlat):
     return [[float(lat), float(lon)] for lon, lat in xy_lonlat]
 
 
-def trip_map(trip, ref_arcs=None, pred_arcs=None, max_network_arcs=6000, title=None):
+def trip_map(trip, ref_arcs=None, pred_arcs=None, max_network_arcs=3000, title=None):
     """trip: Trip object.  ref_arcs / pred_arcs: ordered arc id arrays (or None)."""
     track = trip.track
     m = folium.Map(location=[track.lat.mean(), track.lon.mean()], zoom_start=13, tiles="OpenStreetMap", control_scale=True)
     # fit to the GPS extent
     m.fit_bounds([[track.lat.min(), track.lon.min()], [track.lat.max(), track.lon.max()]])
 
-    # road network near the track (limited so the HTML stays small)
-    lo = np.array([track.lon.min(), track.lat.min()]) - 0.003
-    hi = np.array([track.lon.max(), track.lat.max()]) + 0.003
-    a = trip.nodes[trip.arcs[:, 0]]; b = trip.nodes[trip.arcs[:, 1]]
-    near = np.where(((a >= lo) & (a <= hi)).all(axis=1) | ((b >= lo) & (b <= hi)).all(axis=1))[0]
+    # road network near the track: arcs whose midpoint is within NEAR_M of a GPS point (keeps the HTML small and relevant)
+    from scipy.spatial import cKDTree
+    mid = (trip.nodes_xy[trip.arcs[:, 0]] + trip.nodes_xy[trip.arcs[:, 1]]) / 2
+    dist, _ = cKDTree(trip.track_xy[::3]).query(mid)
+    near = np.where(dist <= 120.0)[0]
     if len(near) > max_network_arcs:
-        near = np.random.default_rng(0).choice(near, max_network_arcs, replace=False)
-    net = folium.FeatureGroup(name=f"Road network ({len(near)} arcs shown)", show=True)
+        near = near[np.argsort(dist[near])[:max_network_arcs]]
+    a = trip.nodes[trip.arcs[:, 0]]; b = trip.nodes[trip.arcs[:, 1]]
+    net = folium.FeatureGroup(name=f"Road network near the track ({len(near)} arcs)", show=True)
     for i in near:
         folium.PolyLine([[a[i, 1], a[i, 0]], [b[i, 1], b[i, 0]]], color="#9aa0a6", weight=1, opacity=0.6).add_to(net)
     net.add_to(m)
@@ -40,7 +41,7 @@ def trip_map(trip, ref_arcs=None, pred_arcs=None, max_network_arcs=6000, title=N
         route_layer(pred_arcs, "Predicted route", "#d73027", 3, dash="6 6")
 
     gps = folium.FeatureGroup(name="GPS points", show=True)
-    step = max(1, len(track) // 1500)       # thin very long tracks
+    step = max(1, len(track) // 800)       # thin very long tracks
     for lat, lon, t in track.iloc[::step][["lat", "lon", "t"]].itertuples(index=False):
         folium.CircleMarker([lat, lon], radius=2, color="#2166ac", fill=True, fill_opacity=0.8, weight=0,
                             tooltip=f"t={t:.0f}s").add_to(gps)
