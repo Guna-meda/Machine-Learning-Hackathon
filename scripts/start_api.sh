@@ -3,7 +3,7 @@
 cd "$(dirname "$0")/.."
 MODE="${1:-test}"; PORT="${2:-8000}"
 case "$MODE" in test) TRIPS="data/student_test"; [ -d "$TRIPS" ] || TRIPS="data/Student folder/student_test";; eval) TRIPS="data/eval_trips";; *) TRIPS="$MODE";; esac
-[ -d "$TRIPS" ] || { echo "Folder not found: $TRIPS"; exit 1; }
+[ -d "$TRIPS" ] || { echo "Folder not found: $TRIPS"; echo "data/ is not in git: unzip the trips into data/student_test (trial) or data/eval_trips (evaluation), or pass the folder path as the first argument."; exit 1; }
 echo "Mode: $MODE | trips folder: $TRIPS | sub-folders: $(ls "$TRIPS" | wc -l) | port: $PORT"
 echo "Give Laptop 2 this API address:  http://$(hostname -I 2>/dev/null | awk '{print $1}'):$PORT"
 export PATHSNAP_EVAL_DIR="$TRIPS"

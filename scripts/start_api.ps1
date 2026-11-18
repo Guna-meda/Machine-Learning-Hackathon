@@ -10,7 +10,15 @@ if ($Mode -eq "test") {
 }
 elseif ($Mode -eq "eval") { $Trips = "data\eval_trips" }
 else { $Trips = $Mode }
-if (-not (Test-Path $Trips)) { Write-Host "Folder not found: $Trips" -ForegroundColor Red; exit 1 }
+if (-not (Test-Path $Trips)) {
+  Write-Host "Folder not found: $Trips" -ForegroundColor Red
+  Write-Host "The data folder is not part of git. Put the trips here (or pass the folder path as the first argument):" -ForegroundColor Yellow
+  Write-Host "  test -> data\student_test   (from Student folder.zip)    eval -> data\eval_trips   (from the evaluator zip)"
+  Write-Host "  Example: Expand-Archive `"$HOME\Downloads\Student folder.zip`" -DestinationPath data"
+  Write-Host "  Or find it:  Get-ChildItem D:\ -Recurse -Directory -Filter student_test -ErrorAction SilentlyContinue | Select FullName"
+  Write-Host "  Then:        .\scripts\start_api.ps1 `"D:\path\to\student_test`""
+  exit 1
+}
 $n = (Get-ChildItem $Trips -Directory).Count
 Write-Host "Mode: $Mode | trips folder: $Trips | sub-folders: $n | port: $Port" -ForegroundColor Cyan
 $env:PATHSNAP_EVAL_DIR = $Trips
