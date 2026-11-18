@@ -1,0 +1,3 @@
+split,trips,points,med_points,med_arcs,max_arcs,med_route_arcs,missing,invalid,nonmono,gaps5,max_gap,jumps,isolated,multi_comp_trips,route_conn,route_rep
+student_test,10,19160,1420.0,13145.0,56027,250.0,0,0,0,44,210.0,0,0,10,9,1
+train,80,208417,1529.0,19526.5,307392,280.0,0,0,0,1216,153064.0,47,0,79,70,9
