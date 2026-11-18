@@ -8,3 +8,4 @@ cache/
 reports/PHASE*_REPORT.*
 handover/
 .claude/
+logs/

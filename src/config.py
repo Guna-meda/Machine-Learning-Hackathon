@@ -26,3 +26,8 @@ MAX_CANDIDATES = 25          # keep at most this many nearest arcs per point (de
 
 # Reference labels derived by alignment are trusted only if the aligned arc is this close to the point
 LABEL_OK_DIST_M = 50.0
+
+# --- Deployment (Phase 2) ---
+# Folder whose sub-folders are the trips the API serves (evaluator trips are dropped here; never hardcode ids).
+EVAL_DIR = Path(os.environ.get("PATHSNAP_EVAL_DIR", STUDENT_TEST_DIR))
+MODEL_ARTIFACTS_DIR = Path(os.environ.get("PATHSNAP_ARTIFACTS_DIR", ARTIFACTS_DIR))
