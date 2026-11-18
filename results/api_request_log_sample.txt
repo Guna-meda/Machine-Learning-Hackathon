@@ -1,0 +1,30 @@
+07:34:28 | listing 10 trips
+07:34:28 | GET /trips from 127.0.0.1 -> 200 in 4 ms
+07:34:28 | PREDICT trip=00000000 : starting pipeline
+07:34:29 | PREDICT trip=00000000 : 2503 points, route of 186 arcs, 0.23s
+07:34:29 | SCORE trip=00000000 : hmm_top1=0.9736 classifier_top1=0.9505 route_f1=0.9862
+07:34:29 | POST /predict from 127.0.0.1 -> 200 in 583 ms
+07:34:29 | PREDICT trip=00000007 : starting pipeline
+07:34:29 | PREDICT trip=00000007 : 1354 points, route of 121 arcs, 0.08s
+07:34:29 | SCORE trip=00000007 : hmm_top1=0.9993 classifier_top1=0.9897 route_f1=0.9918
+07:34:29 | POST /predict from 127.0.0.1 -> 200 in 243 ms
+07:34:29 | PREDICT trip=00000009 : starting pipeline
+07:34:30 | PREDICT trip=00000009 : 1049 points, route of 462 arcs, 0.47s
+07:34:30 | SCORE trip=00000009 : hmm_top1=0.8551 classifier_top1=0.8332 route_f1=0.9582
+07:34:30 | POST /predict from 127.0.0.1 -> 200 in 701 ms
+07:34:30 | PREDICT trip=00000040 : starting pipeline
+07:34:30 | PREDICT trip=00000040 : 2995 points, route of 313 arcs, 0.29s
+07:34:31 | SCORE trip=00000040 : hmm_top1=0.9780 classifier_top1=0.9376 route_f1=0.9968
+07:34:31 | POST /predict from 127.0.0.1 -> 200 in 770 ms
+07:34:31 | PREDICT trip=00000052 : starting pipeline
+07:34:31 | PREDICT trip=00000052 : 262 points, route of 93 arcs, 0.07s
+07:34:31 | SCORE trip=00000052 : hmm_top1=0.9695 classifier_top1=0.9580 route_f1=0.9894
+07:34:31 | POST /predict from 127.0.0.1 -> 200 in 111 ms
+07:34:31 | PREDICT trip=00000056 : starting pipeline
+07:34:32 | PREDICT trip=00000056 : 3958 points, route of 1323 arcs, 0.92s
+07:34:33 | SCORE trip=00000056 : hmm_top1=0.9323 classifier_top1=0.8835 route_f1=0.9930
+07:34:33 | POST /predict from 127.0.0.1 -> 200 in 2024 ms
+07:34:33 | PREDICT trip=00000065 : starting pipeline
+07:34:33 | PREDICT trip=00000065 : 768 points, route of 169 arcs, 0.21s
+07:34:33 | SCORE trip=00000065 : hmm_top1=0.8490 classifier_top1=0.8346 route_f1=0.9446
+07:34:33 | POST /predict from 127.0.0.1 -> 200 in 312 ms

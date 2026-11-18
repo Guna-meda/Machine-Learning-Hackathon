@@ -1,0 +1,16 @@
+case,expected_status,http_status,points_used,points_dropped,route_arcs,warning,hmm_top1,passed,detail
+normal_copy,200,200,262.0,0.0,93.0,,0.969,True,
+one_gps_point,200,200,1.0,0.0,1.0,,1.0,True,
+two_gps_points,200,200,2.0,0.0,1.0,,1.0,True,
+empty_track_file,200,200,0.0,0.0,0.0,no usable GPS points or empty road network,n/a (reference or track empty),True,
+nan_and_invalid_rows,200,200,231.0,31.0,93.0,,0.948,True,
+shuffled_time_order,200,200,262.0,0.0,93.0,,0.969,True,
+duplicate_timestamps,200,200,262.0,0.0,93.0,,0.966,True,
+track_far_from_network,200,200,262.0,0.0,0.0,no candidate roads near the GPS points,0.0,True,
+large_time_gap_midway,200,200,262.0,0.0,93.0,,0.969,True,
+missing_route_file,200,200,262.0,0.0,93.0,,n/a (no reference route on the server for this trip),True,
+garbage_track_file,422,422,,,,,,True,could not process trip garbage_track_file: ValueError: could not convert string 'this' to 
+empty_arcs_file,200,200,262.0,0.0,0.0,no usable GPS points or empty road network,n/a (scoring error: IndexError: index 1680 is out of bounds for axis 0 with size 0),True,
+unknown_trip_id,404,404,,,,,,True,
+path_traversal_id,404,404,,,,,,True,
+missing_trip_id_field,422,422,,,,,,True,
