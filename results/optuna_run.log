@@ -1,0 +1,55 @@
+folds ready
+[I 2026-11-18 06:57:30,928] A new study created in RDB with name: hgb_cv_macro_f1
+trial 0: f1=0.7539 top1=0.8799 ll=0.0621 (17s)
+[I 2026-11-18 06:57:48,321] Trial 0 finished with value: 0.7539095606400243 and parameters: {'learning_rate': 0.1, 'max_iter': 200, 'max_leaf_nodes': 31, 'min_samples_leaf': 20, 'l2_regularization': 0.001, 'max_features': 1.0}. Best is trial 0 with value: 0.7539095606400243.
+trial 1: f1=0.7733 top1=0.8851 ll=0.0591 (72s)
+[I 2026-11-18 06:59:00,466] Trial 1 finished with value: 0.7732902865453264 and parameters: {'learning_rate': 0.05514718587869894, 'max_iter': 400, 'max_leaf_nodes': 74, 'min_samples_leaf': 119, 'l2_regularization': 0.004207988669606638, 'max_features': 0.5779972601681014}. Best is trial 1 with value: 0.7732902865453264.
+trial 2: f1=0.7705 top1=0.8847 ll=0.0583 (93s)
+[I 2026-11-18 07:00:33,610] Trial 2 finished with value: 0.7704511956718436 and parameters: {'learning_rate': 0.023406777359270506, 'max_iter': 400, 'max_leaf_nodes': 63, 'min_samples_leaf': 166, 'l2_regularization': 0.0012087541473056963, 'max_features': 0.9849549260809971}. Best is trial 1 with value: 0.7732902865453264.
+trial 3: f1=0.7497 top1=0.8787 ll=0.0639 (15s)
+[I 2026-11-18 07:00:48,990] Trial 3 finished with value: 0.7497374372785812 and parameters: {'learning_rate': 0.19057174434080473, 'max_iter': 150, 'max_leaf_nodes': 29, 'min_samples_leaf': 34, 'l2_regularization': 0.016480446427978974, 'max_features': 0.762378215816119}. Best is trial 1 with value: 0.7732902865453264.
+trial 4: f1=0.7717 top1=0.8836 ll=0.0586 (38s)
+[I 2026-11-18 07:01:27,367] Trial 4 finished with value: 0.7717017503809902 and parameters: {'learning_rate': 0.06442237870408891, 'max_iter': 200, 'max_leaf_nodes': 64, 'min_samples_leaf': 30, 'l2_regularization': 0.01474275315991467, 'max_features': 0.6831809216468459}. Best is trial 1 with value: 0.7732902865453264.
+trial 5: f1=0.7702 top1=0.8849 ll=0.0583 (54s)
+[I 2026-11-18 07:02:21,154] Trial 5 finished with value: 0.7701920437737387 and parameters: {'learning_rate': 0.06877172495876586, 'max_iter': 350, 'max_leaf_nodes': 31, 'min_samples_leaf': 92, 'l2_regularization': 0.23423849847112907, 'max_features': 0.5232252063599989}. Best is trial 1 with value: 0.7732902865453264.
+trial 6: f1=0.7674 top1=0.8833 ll=0.0586 (25s)
+[I 2026-11-18 07:02:45,902] Trial 6 finished with value: 0.7674029326553465 and parameters: {'learning_rate': 0.10364734587283783, 'max_iter': 150, 'max_leaf_nodes': 20, 'min_samples_leaf': 343, 'l2_regularization': 7.2866537374910445, 'max_features': 0.9041986740582306}. Best is trial 1 with value: 0.7732902865453264.
+trial 7: f1=0.7624 top1=0.8823 ll=0.0593 (23s)
+[I 2026-11-18 07:03:08,438] Trial 7 finished with value: 0.7624497784404696 and parameters: {'learning_rate': 0.045633479761632394, 'max_iter': 100, 'max_leaf_nodes': 70, 'min_samples_leaf': 74, 'l2_regularization': 0.003077180271250686, 'max_features': 0.7475884550556351}. Best is trial 1 with value: 0.7732902865453264.
+trial 8: f1=0.7664 top1=0.8836 ll=0.0583 (64s)
+[I 2026-11-18 07:04:12,480] Trial 8 finished with value: 0.7663861324360908 and parameters: {'learning_rate': 0.02195199700425886, 'max_iter': 400, 'max_leaf_nodes': 35, 'min_samples_leaf': 144, 'l2_regularization': 0.017654048052495083, 'max_features': 0.7600340105889054}. Best is trial 1 with value: 0.7732902865453264.
+trial 9: f1=0.7723 top1=0.8834 ll=0.0590 (38s)
+[I 2026-11-18 07:04:50,636] Trial 9 finished with value: 0.7723078927347563 and parameters: {'learning_rate': 0.08790451384972603, 'max_iter': 150, 'max_leaf_nodes': 93, 'min_samples_leaf': 203, 'l2_regularization': 5.727904470799623, 'max_features': 0.9474136752138245}. Best is trial 1 with value: 0.7732902865453264.
+trial 10: f1=0.7686 top1=0.8837 ll=0.0581 (55s)
+[I 2026-11-18 07:05:45,456] Trial 10 finished with value: 0.7685728580686211 and parameters: {'learning_rate': 0.029309767219773793, 'max_iter': 300, 'max_leaf_nodes': 48, 'min_samples_leaf': 138, 'l2_regularization': 0.0013254614314359584, 'max_features': 0.5528847734587359}. Best is trial 1 with value: 0.7732902865453264.
+trial 11: f1=0.7743 top1=0.8848 ll=0.0598 (44s)
+[I 2026-11-18 07:06:29,547] Trial 11 finished with value: 0.7743254416804424 and parameters: {'learning_rate': 0.08534935969805937, 'max_iter': 200, 'max_leaf_nodes': 95, 'min_samples_leaf': 108, 'l2_regularization': 0.008200195758209695, 'max_features': 0.8744685890503558}. Best is trial 11 with value: 0.7743254416804424.
+trial 12: f1=0.7706 top1=0.8822 ll=0.0632 (41s)
+[I 2026-11-18 07:07:10,745] Trial 12 finished with value: 0.7706022969369356 and parameters: {'learning_rate': 0.14951151134590732, 'max_iter': 250, 'max_leaf_nodes': 87, 'min_samples_leaf': 141, 'l2_regularization': 0.0010969817626356433, 'max_features': 0.8194828578552724}. Best is trial 11 with value: 0.7743254416804424.
+trial 13: f1=0.7735 top1=0.8859 ll=0.0589 (68s)
+[I 2026-11-18 07:08:18,664] Trial 13 finished with value: 0.7735171895550513 and parameters: {'learning_rate': 0.0526296248894768, 'max_iter': 400, 'max_leaf_nodes': 64, 'min_samples_leaf': 68, 'l2_regularization': 0.021221044686766864, 'max_features': 0.7629455306630726}. Best is trial 11 with value: 0.7743254416804424.
+trial 14: f1=0.7729 top1=0.8851 ll=0.0586 (62s)
+[I 2026-11-18 07:09:20,227] Trial 14 finished with value: 0.7729038595380615 and parameters: {'learning_rate': 0.04503121209689558, 'max_iter': 300, 'max_leaf_nodes': 78, 'min_samples_leaf': 79, 'l2_regularization': 0.005938701049381294, 'max_features': 0.7266518792402038}. Best is trial 11 with value: 0.7743254416804424.
+trial 15: f1=0.7717 top1=0.8842 ll=0.0589 (35s)
+[I 2026-11-18 07:09:55,127] Trial 15 finished with value: 0.7716653418025714 and parameters: {'learning_rate': 0.07410569854500601, 'max_iter': 150, 'max_leaf_nodes': 79, 'min_samples_leaf': 55, 'l2_regularization': 0.003808908318870677, 'max_features': 0.8851741722657933}. Best is trial 11 with value: 0.7743254416804424.
+trial 16: f1=0.7698 top1=0.8835 ll=0.0627 (36s)
+[I 2026-11-18 07:10:31,481] Trial 16 finished with value: 0.7697799287880327 and parameters: {'learning_rate': 0.15919939334573338, 'max_iter': 250, 'max_leaf_nodes': 82, 'min_samples_leaf': 76, 'l2_regularization': 0.012516131190556699, 'max_features': 0.9246990115475049}. Best is trial 11 with value: 0.7743254416804424.
+trial 17: f1=0.7704 top1=0.8832 ll=0.0612 (39s)
+[I 2026-11-18 07:11:10,375] Trial 17 finished with value: 0.7703693465934612 and parameters: {'learning_rate': 0.13479726838788583, 'max_iter': 200, 'max_leaf_nodes': 72, 'min_samples_leaf': 37, 'l2_regularization': 0.030573242736769285, 'max_features': 0.819981859101096}. Best is trial 11 with value: 0.7743254416804424.
+trial 18: f1=0.7732 top1=0.8841 ll=0.0609 (61s)
+[I 2026-11-18 07:12:10,981] Trial 18 finished with value: 0.7731613420750847 and parameters: {'learning_rate': 0.09691941412851073, 'max_iter': 400, 'max_leaf_nodes': 56, 'min_samples_leaf': 53, 'l2_regularization': 0.007494838016935015, 'max_features': 0.7658430868445927}. Best is trial 11 with value: 0.7743254416804424.
+trial 19: f1=0.7723 top1=0.8845 ll=0.0589 (58s)
+[I 2026-11-18 07:13:08,858] Trial 19 finished with value: 0.7722551941737376 and parameters: {'learning_rate': 0.05726006253684454, 'max_iter': 300, 'max_leaf_nodes': 59, 'min_samples_leaf': 95, 'l2_regularization': 0.015628196441460667, 'max_features': 0.823388579841001}. Best is trial 11 with value: 0.7743254416804424.
+trial 20: f1=0.7693 top1=0.8842 ll=0.0587 (24s)
+[I 2026-11-18 07:13:32,645] Trial 20 finished with value: 0.769322095755725 and parameters: {'learning_rate': 0.08798811759749006, 'max_iter': 100, 'max_leaf_nodes': 67, 'min_samples_leaf': 188, 'l2_regularization': 0.025284189654292143, 'max_features': 0.9834591018238872}. Best is trial 11 with value: 0.7743254416804424.
+trial 21: f1=0.7729 top1=0.8850 ll=0.0592 (75s)
+[I 2026-11-18 07:14:47,786] Trial 21 finished with value: 0.772885268735393 and parameters: {'learning_rate': 0.045310676744170754, 'max_iter': 400, 'max_leaf_nodes': 79, 'min_samples_leaf': 46, 'l2_regularization': 0.08399063629801372, 'max_features': 0.7812234761520316}. Best is trial 11 with value: 0.7743254416804424.
+trial 22: f1=0.7742 top1=0.8836 ll=0.0598 (69s)
+[I 2026-11-18 07:15:57,162] Trial 22 finished with value: 0.7742183554986316 and parameters: {'learning_rate': 0.05470352956906929, 'max_iter': 350, 'max_leaf_nodes': 80, 'min_samples_leaf': 140, 'l2_regularization': 0.013159822280891013, 'max_features': 0.8751888828155363}. Best is trial 11 with value: 0.7743254416804424.
+trial 23: f1=0.7728 top1=0.8848 ll=0.0609 (70s)
+[I 2026-11-18 07:17:07,337] Trial 23 finished with value: 0.7727955613041274 and parameters: {'learning_rate': 0.07037687959093879, 'max_iter': 350, 'max_leaf_nodes': 88, 'min_samples_leaf': 156, 'l2_regularization': 0.006602460668034003, 'max_features': 0.9177485316939251}. Best is trial 11 with value: 0.7743254416804424.
+trial 24: f1=0.7731 top1=0.8838 ll=0.0591 (70s)
+[I 2026-11-18 07:18:17,503] Trial 24 finished with value: 0.7730838229270511 and parameters: {'learning_rate': 0.05109860271600815, 'max_iter': 400, 'max_leaf_nodes': 63, 'min_samples_leaf': 98, 'l2_regularization': 0.04408649780774366, 'max_features': 0.6685920330296586}. Best is trial 11 with value: 0.7743254416804424.
+best 0.7743254416804424 {'learning_rate': 0.08534935969805937, 'max_iter': 200, 'max_leaf_nodes': 95, 'min_samples_leaf': 108, 'l2_regularization': 0.008200195758209695, 'max_features': 0.8744685890503558} tuning took 1247s
+{'model': 'untuned', 'params': '{"max_iter": 200, "learning_rate": 0.1, "max_leaf_nodes": 31}', 'cv_macro_f1': 0.7535369769564915, 'cv_macro_f1_std': np.float64(0.03337909604623519), 'cv_top1': 0.8802257312137052, 'cv_log_loss': 0.06270115993516981, 'student_top1': 0.8730167014613779, 'student_macro_f1': 0.7533449719224417, 'student_log_loss': 0.057288524100469695, 'student_route_continuity': 0.7025698324022346, 'fit_time_s': 3.059467077255249, 'inference_s_student': 0.2631349563598633, 'inference_us_per_candidate': 1.1286757787723187}
+{'model': 'tuned', 'params': '{"learning_rate": 0.08534935969805937, "max_iter": 200, "max_leaf_nodes": 95, "min_samples_leaf": 108, "l2_regularization": 0.008200195758209695, "max_features": 0.8744685890503558}', 'cv_macro_f1': 0.7743254416804424, 'cv_macro_f1_std': np.float64(0.030153388571771883), 'cv_top1': 0.8847633258169028, 'cv_log_loss': 0.05982579801635256, 'student_top1': 0.8829853862212944, 'student_macro_f1': 0.7855433702488989, 'student_log_loss': 0.05018841091299523, 'student_route_continuity': 0.7590673575129534, 'fit_time_s': 8.214339971542358, 'inference_s_student': 0.6460442543029785, 'inference_us_per_candidate': 2.7711046526618732}

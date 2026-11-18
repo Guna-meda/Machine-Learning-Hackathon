@@ -1,0 +1,23 @@
+{
+  "best_params": {
+    "learning_rate": 0.08534935969805937,
+    "max_iter": 200,
+    "max_leaf_nodes": 95,
+    "min_samples_leaf": 108,
+    "l2_regularization": 0.008200195758209695,
+    "max_features": 0.8744685890503558
+  },
+  "best_cv_macro_f1": 0.7743254416804424,
+  "n_trials": 25,
+  "tuning_seconds": 1246.563589334488,
+  "seed": 42,
+  "search_space": {
+    "learning_rate": "log-uniform 0.02-0.3",
+    "max_iter": "int 100-400 step 50",
+    "max_leaf_nodes": "int 15-95",
+    "min_samples_leaf": "log-int 20-400",
+    "l2_regularization": "log-uniform 1e-3-10",
+    "max_features": "uniform 0.5-1.0"
+  },
+  "objective": "mean 5-fold GroupKFold CV macro F1 (arc level)"
+}

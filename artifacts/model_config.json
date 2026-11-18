@@ -1,0 +1,43 @@
+{
+  "model_name": "HistGradientBoosting (Optuna-tuned)",
+  "params": {
+    "learning_rate": 0.08534935969805937,
+    "max_iter": 200,
+    "max_leaf_nodes": 95,
+    "min_samples_leaf": 108,
+    "l2_regularization": 0.008200195758209695,
+    "max_features": 0.8744685890503558
+  },
+  "feature_columns": [
+    "dist",
+    "dist_rank",
+    "dist_minus_min",
+    "n_cands",
+    "frac_along",
+    "lateral",
+    "arc_len",
+    "speed",
+    "turn_rate",
+    "moving",
+    "heading_cos",
+    "heading_cos_ctx",
+    "ctx_dist_mean",
+    "ctx_dist_max",
+    "ctx_dist_min",
+    "progress_along",
+    "progress_ratio",
+    "from_out_deg",
+    "to_out_deg",
+    "from_in_deg",
+    "has_reverse",
+    "dt_prev",
+    "dt_next"
+  ],
+  "candidate_radius_m": 60.0,
+  "max_candidates": 25,
+  "seed": 42,
+  "trained_on": "80 train trips, label_ok rows only",
+  "n_training_rows": 1954580,
+  "fit_seconds": 25.1,
+  "sklearn_version": "1.9.1"
+}

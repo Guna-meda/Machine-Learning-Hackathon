@@ -1,0 +1,8 @@
+{
+  "student_top1": 0.8807933194154488,
+  "student_macro_f1": 0.7886879545917821,
+  "student_log_loss": 0.05003173962702225,
+  "student_route_continuity": 0.755883052056097,
+  "inference_s": 0.7665679454803467,
+  "note": "final model refit on all reliable train rows, classifier only"
+}
