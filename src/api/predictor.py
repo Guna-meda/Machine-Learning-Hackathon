@@ -91,7 +91,7 @@ class Predictor:
 
         result.update(point_arcs_hmm=hmm, point_arcs_clf=clf, route=route, breaks=breaks, info=info,
                       mean_candidates=float(len(feats) / max(feats.point_idx.nunique(), 1)), timings=timings,
-                      _trip=trip, _orig_idx=orig_idx, _net=net)
+                      _trip=trip, _orig_idx=orig_idx, _net=net, _feats=feats)
         return result
 
 

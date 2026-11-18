@@ -20,59 +20,65 @@ Noisy GPS points are matched to a road network. A classifier scores the candidat
 ```bash
 pip install -r requirements.txt
 ```
-Python 3.10+. Data goes in `data/Student folder/{train,student_test}` (gitignored). Use `PATHSNAP_DATA_DIR` to point somewhere else.
+Python 3.10+.
 
-## Reproduce the experiments
-```bash
-python3 scripts/01_eda.py                       # data inventory + quality stats
-python3 scripts/01b_eda_maps.py                 # EDA maps and plots
-python3 scripts/02_build_dataset.py             # alignment, candidates, features   (~20 s)
-python3 scripts/03_train_compare.py             # 6 models, GroupKFold             (~12 min)
-python3 scripts/04_plots_phase1.py              # comparison plots
-python3 scripts/06_tune_optuna.py 40 1200       # Optuna TPE tuning, <=40 trials / 20 min
-python3 scripts/07_export_artifacts.py          # final model -> artifacts/
-python3 scripts/08_tune_decoder_and_compare.py  # HMM tuning + classifier-only vs +HMM
-python3 scripts/09_make_prediction_maps.py      # Folium maps, reference vs predicted (student_test)
-python3 scripts/10_robustness_test.py           # needs the API running (see below)
+## Data layout (gitignored - never commit `data/`)
 ```
-Results are written to `results/`, figures to `reports/figures/`, maps to `reports/maps/`.
-
-## Deploy for the evaluation (two laptops, same Wi-Fi / hotspot)
-
-### Laptop 1 - model + API (holds the reference routes)
-1. Put the evaluator trip folders in one folder, e.g. `C:\eval_trips\<trip_id>\<trip_id>.track/.nodes/.arcs/.route`.
-2. Start the API (the trip ids are discovered from the folder, nothing is hardcoded):
-```bash
-# Linux / macOS
-export PATHSNAP_EVAL_DIR=/path/to/eval_trips
-python3 -m uvicorn src.api.app:app --host 0.0.0.0 --port 8000
+Machine-Learning-Hackathon/
+  data/
+    train/          80 trip folders   (from Student folder.zip)   - only needed to re-run training
+    student_test/   10 trip folders   (from Student folder.zip)   - used for the trial / rehearsal
+    eval_trips/     10 trip folders   (from the evaluator zip)    - used ONLY in the real evaluation
+      <trip_id>/<trip_id>.track  .nodes  .arcs  .route
 ```
+The old layout `data/Student folder/{train,student_test}` also works, and a wrapper folder inside `eval_trips` (e.g. `eval_trips/evaluator_test/<trip>/`) is fine.
+
+## Run the system (two laptops, same Wi-Fi / hotspot)
+
+**Laptop 1 - model + API.** Windows PowerShell, from the repo folder:
 ```powershell
-# Windows PowerShell
-$env:PATHSNAP_EVAL_DIR = "C:\eval_trips"
-python -m uvicorn src.api.app:app --host 0.0.0.0 --port 8000
+.\scripts\start_api.ps1 test      # TRIAL: serves data\student_test
+.\scripts\start_api.ps1 eval      # EVALUATION: serves data\eval_trips
 ```
-3. Find the laptop's IP (`ipconfig` on Windows, `ip a` / `ifconfig` elsewhere) and allow port 8000 through the firewall (accept the Windows prompt, or run `netsh advfirewall firewall add rule name="PathSnap API" dir=in action=allow protocol=TCP localport=8000` as admin).
-4. Request logs appear in this console (and in `logs/api_requests.log`). Show them to the evaluator.
+(Linux/macOS: `bash scripts/start_api.sh test` or `eval`.) The script prints the address to give Laptop 2, for example `http://192.168.1.20:8000`. Allow Python through the Windows firewall when asked (private network).
 
-### Laptop 2 - UI
-```bash
-python3 -m http.server 8080 --directory src/ui
+**Laptop 2 - UI.**
+```powershell
+.\scripts\start_ui.ps1 http://192.168.1.20:8000
 ```
-Open `http://localhost:8080/?api=http://<LAPTOP1_IP>:8000` (or open it and type the API URL into the box). Click a trip; the UI calls `POST /predict` and shows the route and accuracy. If the API laptop uses another port or address, just change the URL box.
+It prints the link to open (`http://localhost:8080/?api=...`). You can also change the API address in the box on the page.
+
+Check from Laptop 2 before the demo: open `http://<LAPTOP1_IP>:8000/health` - it must show `"status":"ok"` and `n_trips` 10.
 
 ### API
 | Endpoint | Purpose |
 |---|---|
-| `GET /health` | status, model name, decoder settings |
-| `GET /trips` | trip ids found in `PATHSNAP_EVAL_DIR` |
-| `POST /predict` `{"trip_id": "..."}` | predicted route, per-point arcs, GPS, timings and server-side accuracy |
+| `GET /health` | status, trips folder, model name, decoder settings |
+| `GET /trips` | trip ids found in the trips folder |
+| `POST /predict` `{"trip_id": "..."}` | predicted route, classifier-only picks, GPS, timings, server-side accuracy |
 | `GET /map/{trip_id}` | Folium map: GPS + network + predicted route (never the reference) |
 
-Quick check: `curl http://<LAPTOP1_IP>:8000/health`.
+Every request is logged to the console and to `logs/api_requests.log`. Environment variables: `PATHSNAP_EVAL_DIR` (trips folder), `PATHSNAP_ARTIFACTS_DIR` (model files), `PATHSNAP_DATA_DIR` (training data).
 
-### Environment variables
-`PATHSNAP_EVAL_DIR` (trips served by the API; default: student_test folder), `PATHSNAP_ARTIFACTS_DIR` (model files; default `artifacts/`), `PATHSNAP_DATA_DIR` (training data).
+## HMM demo (terminal)
+```bash
+python scripts/12_demo_hmm.py 00000077            # student trip: what the HMM changed, with examples
+python scripts/12_demo_hmm.py <trip_id> data/eval_trips    # same on an evaluation trip
+```
+The UI also shows it: tick/untick "Classifier only" and "With HMM", and read the card "point predictions changed by the HMM".
+
+## Reproduce the experiments
+```bash
+python3 scripts/01_eda.py ; python3 scripts/01b_eda_maps.py
+python3 scripts/02_build_dataset.py             # alignment, candidates, features   (~20 s)
+python3 scripts/03_train_compare.py             # 6 models, GroupKFold             (~12 min)
+python3 scripts/04_plots_phase1.py
+python3 scripts/06_tune_optuna.py 40 1200       # Optuna TPE tuning, <=40 trials / 20 min
+python3 scripts/07_export_artifacts.py          # final model -> artifacts/
+python3 scripts/08_tune_decoder_and_compare.py  # HMM tuning + classifier-only vs +HMM
+python3 scripts/09_make_prediction_maps.py      # Folium maps (student_test, with reference)
+python3 scripts/10_robustness_test.py           # needs the API running (trial mode)
+```
 
 ## Notes
 - The reference route is read only by `src/api/evaluator.py` after the prediction is finished; the prediction code (`src/api/predictor.py`) never opens `.route`.

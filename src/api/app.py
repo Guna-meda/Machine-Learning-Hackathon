@@ -132,6 +132,12 @@ def predict(req: PredictRequest):
     if evaluation.get("available"):
         log.info("SCORE trip=%s : hmm_top1=%.4f classifier_top1=%.4f route_f1=%.4f", req.trip_id,
                  evaluation["hmm_top1_accuracy"], evaluation["classifier_only_top1_accuracy"], evaluation["route_f1"])
+    # what did the HMM change?  the classifier's raw per-point picks are drawn as separate arcs (no joining)
+    clf, hmm = pred["point_arcs_clf"], pred["point_arcs_hmm"]
+    clf_arcs = sorted({int(a) for a in clf if a >= 0})[:8000]
+    clf_lines = [[[float(trip.nodes[trip.arcs[a, 0]][1]), float(trip.nodes[trip.arcs[a, 0]][0])],
+                  [float(trip.nodes[trip.arcs[a, 1]][1]), float(trip.nodes[trip.arcs[a, 1]][0])]] for a in clf_arcs]
+    changed = int(((clf != hmm) & (clf >= 0)).sum())
     step = max(1, len(trip.track) // 4000)                    # thin the GPS trace for the browser
     gps = trip.track.iloc[::step][["lat", "lon"]].values.tolist()
     return {
@@ -142,6 +148,8 @@ def predict(req: PredictRequest):
         "predicted_route_polylines": route_polylines(trip, pred["route"], pred["breaks"]),
         "route_breaks": len(pred["breaks"]),
         "predicted_arc_per_point": [int(a) for a in pred["point_arcs_hmm"]],
+        "classifier_only_polylines": clf_lines,
+        "hmm_changed_points": changed,
         "gps_points": gps,
         "diagnostics": {k: int(v) for k, v in pred["info"].items()},
         "evaluation": evaluation,

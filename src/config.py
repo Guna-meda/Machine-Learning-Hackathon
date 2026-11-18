@@ -7,7 +7,10 @@ import os
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DATA_ROOT = Path(os.environ.get("PATHSNAP_DATA_DIR", REPO_ROOT / "data" / "Student folder"))
+# Preferred layout: data/train, data/student_test, data/eval_trips.  The old data/"Student folder"/ layout still works.
+_DATA = REPO_ROOT / "data"
+_default_root = _DATA if (_DATA / "train").exists() else _DATA / "Student folder"
+DATA_ROOT = Path(os.environ.get("PATHSNAP_DATA_DIR", _default_root))
 TRAIN_DIR = DATA_ROOT / "train"
 STUDENT_TEST_DIR = DATA_ROOT / "student_test"
 
