@@ -1,0 +1,10 @@
+{
+  "beta": 19.371235812762567,
+  "emission_weight": 0.609663773234375,
+  "disconnect_penalty": 40.67224008447934,
+  "uturn_penalty": 1.6432290293376401,
+  "reach_bound": 400.0,
+  "gap_s": 10.0,
+  "max_states": 8,
+  "min_prob": 0.0001
+}
