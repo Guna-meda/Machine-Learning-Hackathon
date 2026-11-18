@@ -79,7 +79,12 @@ async function loadTrips() {
   try {
     const h = await (await fetch(url + "/health")).json();
     const t = await (await fetch(url + "/trips")).json();
-    status("Connected. Model: " + h.model + ". " + t.trips.length + " trips available.");
+    if (t.trips.length === 0) {
+      status("Connected to the API, but it found 0 trips in: " + h.data_dir + ". On the API laptop, set PATHSNAP_EVAL_DIR to the folder that holds the trip folders (or start it with scripts/run_api.ps1 <folder>) and restart the API.", true);
+      $("trips").innerHTML = "";
+      return;
+    }
+    status("Connected. Model: " + h.model + ". " + t.trips.length + " trips available (folder: " + h.data_dir + ").");
     $("trips").innerHTML = "";
     t.trips.forEach(tr => {
       const b = document.createElement("button");
