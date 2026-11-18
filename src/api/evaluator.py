@@ -6,7 +6,7 @@ Per-point reference labels are derived with the same monotone alignment used for
 import numpy as np
 from sklearn.metrics import f1_score
 from src.config import LABEL_OK_DIST_M
-from src.data.loader import load_trip
+from src.data.loader import load_trip, trip_prefix
 from src.data.alignment import align_points_to_route
 from src.api.predictor import clean_track
 from src.hmm.evaluate_hmm import route_set_scores
@@ -16,7 +16,7 @@ from src.models.evaluate import route_continuity
 def score_prediction(trip_dir, pred):
     """pred: result dict from Predictor.predict_trip_dir.  Returns a metrics dict (or {'available': False})."""
     from pathlib import Path
-    route_file = Path(trip_dir) / f"{Path(trip_dir).name}.route"
+    route_file = Path(trip_dir) / f"{trip_prefix(trip_dir)}.route"
     if not route_file.exists() or route_file.stat().st_size == 0:
         return {"available": False, "reason": "no reference route on the server for this trip"}
     trip = load_trip(trip_dir, with_route=True)

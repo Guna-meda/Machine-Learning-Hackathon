@@ -43,16 +43,30 @@ def _read_table(path: Path, ncols: int, dtype):
     return arr
 
 
+def trip_prefix(trip_dir) -> str:
+    """Common file name of a trip folder: <prefix>.track/.nodes/.arcs/.route.
+
+    Normally the prefix equals the folder name.  If a folder holds differently named files
+    (or an extra wrapper name), we fall back to the stem of the first .track file we find.
+    """
+    trip_dir = Path(trip_dir)
+    if (trip_dir / f"{trip_dir.name}.track").exists():
+        return trip_dir.name
+    tracks = sorted(trip_dir.glob("*.track"))
+    return tracks[0].stem if tracks else trip_dir.name
+
+
 def load_trip(trip_dir, with_route: bool = True) -> Trip:
     """Load a trip.  with_route=False never opens the .route file (used by the API predictor)."""
     trip_dir = Path(trip_dir)
-    tid = trip_dir.name
-    track = pd.DataFrame(_read_table(trip_dir / f"{tid}.track", 3, float), columns=["lon", "lat", "t"])
-    nodes = _read_table(trip_dir / f"{tid}.nodes", 2, float)
-    arcs = _read_table(trip_dir / f"{tid}.arcs", 2, np.int64)
+    tid = trip_dir.name                       # the trip id shown to users is the folder name
+    pre = trip_prefix(trip_dir)               # the files may use another prefix
+    track = pd.DataFrame(_read_table(trip_dir / f"{pre}.track", 3, float), columns=["lon", "lat", "t"])
+    nodes = _read_table(trip_dir / f"{pre}.nodes", 2, float)
+    arcs = _read_table(trip_dir / f"{pre}.arcs", 2, np.int64)
     route = None
-    if with_route and (trip_dir / f"{tid}.route").exists():
-        route = _read_table(trip_dir / f"{tid}.route", 1, np.int64).ravel()
+    if with_route and (trip_dir / f"{pre}.route").exists():
+        route = _read_table(trip_dir / f"{pre}.route", 1, np.int64).ravel()
     trip = Trip(tid, track, nodes, arcs, route)
     set_projection(trip)
     return trip

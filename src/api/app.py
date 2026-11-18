@@ -21,6 +21,7 @@ from pydantic import BaseModel
 from src.config import EVAL_DIR, MODEL_ARTIFACTS_DIR, REPO_ROOT
 from src.api.predictor import Predictor, route_polylines
 from src.api.evaluator import score_prediction
+from src.data.loader import trip_prefix
 from src.viz.maps import trip_map
 
 LOG_DIR = REPO_ROOT / "logs"
@@ -54,8 +55,19 @@ async def log_requests(request: Request, call_next):
 
 
 def trip_folders():
+    """Trip folders under EVAL_DIR: folders that contain a .track file, one or two levels down
+    (an unzipped archive often adds a wrapper folder).  The folder name is the trip id."""
     root = Path(EVAL_DIR)
-    return {p.name: p for p in sorted(root.iterdir()) if p.is_dir()} if root.exists() else {}
+    found = {}
+    if not root.exists():
+        return found
+    for p in sorted(root.iterdir()):
+        if not p.is_dir():
+            continue
+        candidates = [p] if any(p.glob("*.track")) else [c for c in sorted(p.iterdir()) if c.is_dir() and any(c.glob("*.track"))]
+        for c in candidates:
+            found.setdefault(c.name, c)
+    return found
 
 
 def resolve_trip(trip_id):
@@ -86,7 +98,7 @@ def health():
 
 @app.get("/trips")
 def trips():
-    out = [{"trip_id": tid, "n_gps_points": count_points(p / f"{tid}.track")} for tid, p in trip_folders().items()]
+    out = [{"trip_id": tid, "n_gps_points": count_points(p / f"{trip_prefix(p)}.track")} for tid, p in trip_folders().items()]
     log.info("listing %d trips", len(out))
     return {"trips": out}
 
